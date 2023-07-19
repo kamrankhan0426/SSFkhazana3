@@ -13,6 +13,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import $ from 'jquery';
 import { ScaleLoader } from "react-spinners";
+import Form from './components/Pages/Form';
 
 function App() {
 
@@ -32,6 +33,7 @@ function App() {
           <Route exact path='/Blankpage' element ={<Blankpage/>}></Route>
           <Route exact path="/PrizeWheel" element={<PrizeWheel/>}></Route>
           <Route exact path='/Tables' element ={<Tables/>}></Route>
+          <Route exact path='/Form' element ={<Form />}></Route> 
         </Routes>
       </Router>
    

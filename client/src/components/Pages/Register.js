@@ -10,7 +10,7 @@ export default function Register(){
   const [password, setPassword] = useState("");
   const [name,setname] = useState()
   const [phone ,setPhone] = useState()
-  const [flag ,setFlag] = useState(false)
+  const [flag ,setFlag] = useState(true)
 
 
   useEffect(()=>{
@@ -53,7 +53,7 @@ export default function Register(){
           handleSpinner(false)
         } else {
           let insertUserUrl = new URL("http://localhost:4000/insertUser");
-          let res3 = await InsertUser(insertUserUrl, { parent_client_Id,"client_Id":clientId, email, password,name,phone,accountstatus:'Pending',createddatetime });
+          let res3 = await InsertUser(insertUserUrl, { parent_client_Id,"client_Id":clientId, email, password,name,phone,accountstatus:'Pending',createddatetime,accounttype:'Basic',plan_pricing:'100' });
           handleSpinner(false)
           if(res3.message === 'Success')
           {
@@ -116,11 +116,12 @@ export default function Register(){
     const sanitizedEmail = email.replace(/[^a-zA-Z0-9]/g, "");
     const emailPrefix = sanitizedEmail.substring(0, 7).toUpperCase();
     const remainingRandomString = randomString.slice(0, length - emailPrefix.length);
-    const clientId = emailPrefix + remainingRandomString;
+    const clientId = 'SSF-SK'+ emailPrefix + remainingRandomString;
+
     const url = new URL("http://localhost:4000/getOneUser");
-    url.searchParams.append("client_Id", clientId);
-    
+    url.searchParams.append("client_Id", clientId);    
     let res1 = await findDetails(url);
+
     if (res1.message === 'Not found') {
       return clientId;
     } else {
@@ -214,6 +215,8 @@ export default function Register(){
                       <a className="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn" href="#" onClick={register}>SIGN UP</a>
                     </div>
                     <div className="text-center mt-4 font-weight-light"> Already have an account? <a href="/Login" className="text-primary">Login</a>
+                    <div className="text-center"><a href="/Form" >Insert Users</a></div>
+
                     </div>
                   </form>
                 </div>
@@ -226,7 +229,7 @@ export default function Register(){
                     </div>
                     <form className="p-3">
                       <div style={{width:'100%'}} className="text-center text-success">
-                            Your Account Activate withing 24 hours. You will get your will get Client id on
+                            Your Account Activate withing 24 hours. You will get your Client Id on registered email
                       </div>
                     </form>
                   </div>
@@ -238,7 +241,6 @@ export default function Register(){
           </div>
           {/* page-body-wrapper ends */}
         </div>
-        
       </div>
       
       

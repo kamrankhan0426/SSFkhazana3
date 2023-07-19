@@ -3,6 +3,8 @@ import { ToastContainer } from "react-toastify";
 import PrizeWheel from "./PrizeWheel";
 import Profile from './Pages/Profile'
 import Admin from "./Pages/Admin";
+import CoinPage from "./Pages/CoinPage";
+import WalletPage from "./Pages/WalletPage";
 
 export default function Home() {
 
@@ -13,8 +15,9 @@ export default function Home() {
 
   useEffect(() => {
     let userDetail = JSON.parse(localStorage.getItem('Purple'))
-    if (userDetail) {
+    if (userDetail) {      
       setUserDetail(userDetail)
+      findUser(userDetail)
       findNetwork(userDetail.client_Id)
     } else {
       let a = document.createElement('a')
@@ -29,16 +32,33 @@ export default function Home() {
     try {
       const response = await fetch(url, { method: "GET", redirect: "follow" });
       const result = await response.json();
+      console.log(result)
       setNetwords(result.data)
     } catch (error) {
       throw error;
     }
   }
-  const [isNavbarOpen, setIsNavbarOpen] = useState(false);
+  
+  useEffect(()=>{
+    console.log(networks,'Networks')
+  },[networks])
+  
 
-  const handleNavbarToggle = () => {
-    setIsNavbarOpen(!isNavbarOpen);
+  const findUser = async (userDetail) => {
+    try {
+        const getParentUserUrl = new URL("http://localhost:4000/getOneUser");
+        getParentUserUrl.searchParams.append("email", userDetail.email);
+        const response = await fetch(getParentUserUrl, { method: 'GET', redirect: "follow" });
+        const result = await response.json();
+        console.log(result,'Result is here')
+        setUserDetail(result.data);
+        return result;
+    } catch (error) {
+      throw error;
+    }
   };
+  
+  useEffect(()=>{console.log(userDetail)},[userDetail])
 
   return (
     <div>
@@ -52,7 +72,7 @@ export default function Home() {
           <link rel="stylesheet" href="assets/css/style.css" />
           <link rel="shortcut icon" href="assets/images/favicon.ico" />
 
-          <div className="container-scroller" >
+          <div className="container-scroller"  >
             <nav className="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
               <div className="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
                 <a className="navbar-brand brand-logo" href="/home" style={{
@@ -67,13 +87,13 @@ export default function Home() {
                 {/* <button className="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize" id="togglerofNavbar">
                 <span className="mdi mdi-menu" />
                 </button> */}
-                <button  className="bg-transparent border-0 p-0 m-0 navbar-toggler"  type="button"  data-bs-toggle="offcanvas"  data-bs-target="#offcanvasWithBackdrop"  aria-controls="offcanvasWithBackdrop">
+                <button  className="bg-transparent border-0 p-0 m-0 navbar-toggler navbar-toggler align-self-center"  type="button"  data-bs-toggle="offcanvas"  data-bs-target="#offcanvasWithBackdrop"  aria-controls="offcanvasWithBackdrop">
                 <span className="mdi mdi-menu" />
                </button>
 
                 <ul className="navbar-nav navbar-nav-right profileDropdown">
                   <li className="nav-item nav-profile dropdown">
-                    <a className="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+                    <a className="nav-link dropdown-toggle" id="profileDropdown" href="#/" data-toggle="dropdown" aria-expanded="false">
                       <div className="nav-profile-img">
                         <img src={userDetail.profileimg ? userDetail.profileimg : "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"} alt="profile" style={{ border: "1px solid #e0dfdf" }} />
                         <span className="availability-status online" />
@@ -83,13 +103,13 @@ export default function Home() {
                       </div>
                     </a>
                     <div className="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
-                      <a className="dropdown-item" href="#" onClick={() => setactiveTab('Profile')} >
+                      <a className="dropdown-item" href="#/" onClick={() => setactiveTab('Profile')} >
                         <i className="mdi mdi-account-circle-outline mr-2 text-dark"  /> Profile </a>
                       <div className="dropdown-divider" />
-                      <a className="dropdown-item" href="#">
+                      <a className="dropdown-item" href="#/">
                         <i className="mdi mdi-cached mr-2 text-success" /> Activity Log </a>
                       <div className="dropdown-divider" />
-                      <a className="dropdown-item" href="#" onClick={()=>{localStorage.removeItem('Purple'); window.location.href='/Login'}}>
+                      <a className="dropdown-item" href="#/" onClick={()=>{localStorage.removeItem('Purple'); window.location.href='/Login'}}>
                         <i className="mdi mdi-logout mr-2 text-primary" /> Signout </a>
                     </div>
                   </li>
@@ -128,25 +148,35 @@ export default function Home() {
                     </a>
                   </li>
                   <li className={activeTab === 'Dashboard' ? 'nav-item active' : 'nav-item'} data-bs-dismiss="offcanvas"aria-label="Close" onClick={() => setactiveTab('Dashboard')} >
-                    <a className="nav-link" href="#"  >
+                    <a className="nav-link" href="#/"  >
                       <span className="menu-title">Dashboard</span>
                       <i className="mdi mdi-home menu-icon" />
                     </a>
                   </li>
                   <li className={activeTab === 'Spin The wheel' ? 'nav-item active' : 'nav-item'} data-bs-dismiss="offcanvas"aria-label="Close" onClick={() => setactiveTab('Spin The wheel')}  >
-                    <a className="nav-link" href="#" >
+                    <a className="nav-link" href="#/" >
                       <span className="menu-title">Spin The wheel</span>
                       <i className="mdi mdi-gift menu-icon" />
                     </a>
-                  </li>
-                  
+                  </li>                  
                   {userDetail.masteraccount ? <li className={activeTab === 'Admin' ? 'nav-item active' : 'nav-item'} data-bs-dismiss="offcanvas"aria-label="Close" onClick={() => setactiveTab('Admin')} >
-                    <a className="nav-link" href="#" >
+                    <a className="nav-link" href="#/" >
                       <span className="menu-title">Admin</span>
                       <i className="mdi mdi-shield-account menu-icon" />
                     </a>
                   </li>:''}
-
+                  <li className={activeTab === 'Coins' ? 'nav-item active' : 'nav-item'} data-bs-dismiss="offcanvas"aria-label="Close" onClick={() => setactiveTab('Coins')}  >
+                    <a className="nav-link" href="#/" >
+                      <span className="menu-title">Coins</span>
+                      <i className="mdi mdi-coin menu-icon" />
+                    </a>
+                  </li>   
+                  <li className={activeTab === 'Wallet' ? 'nav-item active' : 'nav-item'} data-bs-dismiss="offcanvas"aria-label="Close" onClick={() => setactiveTab('Wallet')}  >
+                    <a className="nav-link" href="#/" >
+                      <span className="menu-title">Wallet</span>
+                      <i className="mdi mdi-wallet menu-icon" />
+                    </a>
+                  </li>  
                   <li className={activeTab === 'Profile' ? 'nav-item active' : 'nav-item'}  onClick={() => setactiveTab('Profile')}>
                     <a className="nav-link" data-toggle="collapse" href="#general-pages" aria-expanded="false" aria-controls="general-pages">
                       <span className="menu-title">Profile</span>
@@ -181,13 +211,6 @@ export default function Home() {
                         <i className="mdi mdi-home" />
                       </span> Dashboard
                     </h3>
-                    <nav aria-label="breadcrumb">
-                      <ul className="breadcrumb">
-                        {/* <li className="breadcrumb-item active" aria-current="page">
-                    <span />Overview <i className="mdi mdi-alert-circle-outline icon-sm text-primary align-middle" />
-                  </li> */}
-                      </ul>
-                    </nav>
                   </div>
                   <div className="row">
                     <div className="col-md-4 stretch-card grid-margin">
@@ -515,7 +538,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                <div className={activeTab === 'Profile' ? 'content-wrapper' : 'content-wrapper d-none'}>
+                <div className={activeTab === 'Profile' ? 'content-wrapper' : 'content-wrapper d-none'} style={{padding:'2.75rem 0.25rem'}} >
                   <div className="row">
                     <div className="col-md-12 stretch-card grid-margin">
                       <Profile />
@@ -527,6 +550,21 @@ export default function Home() {
                     <div className="col-md-12 stretch-card grid-margin">
                       <Admin />
                     </div>
+                  </div>
+                </div>
+                <div className={activeTab === 'Coins' ? 'content-wrapper' : 'content-wrapper d-none'}>
+                  <div className="row">
+                    <div className="col-md-12 stretch-card grid-margin">
+                      <CoinPage userDetail={userDetail} />
+                    </div>
+                  </div>
+                </div>
+                <div className={activeTab === 'Wallet' ? 'content-wrapper' : 'content-wrapper d-none'} style={{padding:'2.75rem 0.25rem'}}>
+                  <div className="row">
+                    <div className="col-md-12 stretch-card grid-margin" style={{padding:'0'}}>
+                      <WalletPage networks={networks} userDetail={userDetail} setUserDetail={setUserDetail} />
+                    </div>
+                    
                   </div>
                 </div>
                 <footer className="footer">

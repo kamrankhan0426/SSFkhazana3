@@ -101,11 +101,18 @@ function Profile() {
     });
   }
 
-  // useEffect(()=>{
-  //   console.log(userDetail)
-  // },[userDetail])
-
-
+  function validatePassword(reenterPassword1,reenterPassword2,reenterPassword0) {
+    if(reenterPassword1 !== reenterPassword2){
+      toast.error('Password doesn\'t match ');
+      return false
+    }
+    if (reenterPassword0 !== userDetail.password) {
+        toast.error('Incorrect old password');
+        return false
+    }
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regex.test(reenterPassword1);
+  }
 
   return (
     <div style={{width:'100%'}}>
